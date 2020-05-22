@@ -25,26 +25,33 @@ const listLength = getEnvAsNumber("LIST_LENGTH");
 
 try {
     for await (const req of s) {
-        let lolomo = await lolomoServiceDeno(req);
+        try {
+            let lolomo = await lolomoServiceDeno(req);
 
-        if (isJson) {
-            const l = lolomo as Lolomo;
-            // 2001 iq
-            // @ts-ignore
-            const ratings = parseRatings(lolomo);
-            const ratingsResponse: RatingsResponse = await ratingsService(ratings);
+            if (isJson) {
+                const l = lolomo as Lolomo;
+                // 2001 iq
+                // @ts-ignore
+                const ratings = parseRatings(lolomo);
+                //const ratingsResponse: RatingsResponse = await ratingsService(ratings);
 
-            Object.keys(ratingsResponse).forEach((k: string, i) => {
-                const listIdx = Math.floor(i / listLength);
-                const videoIdx = i % listLength;
+                /*
+                   Object.keys(ratingsResponse).forEach((k: string, i) => {
+                   const listIdx = Math.floor(i / listLength);
+                   const videoIdx = i % listLength;
 
-                l.lists[listIdx].videos[videoIdx].rating = ratingsResponse[+k];
-            });
+                   l.lists[listIdx].videos[videoIdx].rating = ratingsResponse[+k];
+                   });
+                 */
 
-            req.respond({body: JSON.stringify(lolomo)});
+                req.respond({body: JSON.stringify(lolomo)});
+            }
+
+        } catch (e) {
+            console.error("INNER CATCH", e);
         }
     }
 
 } catch (e) {
-    console.error(e);
+    console.error("OUTER CATCH", e);
 }

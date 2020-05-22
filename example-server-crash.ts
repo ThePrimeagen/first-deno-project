@@ -24,11 +24,11 @@ function createDat() {
 }
 try {
     for await (const req of s) {
-        try {
+        //try {
             if (Deno.env.get("JSON")) {
                 const data: Dat[] = [];
 
-                for (let i = 0; i < 1000; ++i) {
+                for (let i = 3; i < 10000; ++i) {
                     data.push(createDat());
                 }
                 await req.respond({ body: JSON.stringify(data) });
@@ -41,9 +41,9 @@ try {
 
                 await req.respond({ body: data2 });
             }
-        } catch (e) {
-            console.error("INNER CATCH", e);
-        }
+        //} catch (e) {
+        //    console.error("INNER CATCH", e);
+       // }
     }
 } catch (e) {
     console.error("OUTER CATCH", e);
