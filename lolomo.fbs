@@ -1,6 +1,7 @@
-namespace DenoTest;
+Namespace DenoTest;
 
 table Video {
+    id:int;
     title:string;
     rating:int;
 }
