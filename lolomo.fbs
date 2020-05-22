@@ -1,0 +1,17 @@
+namespace DenoTest;
+
+table Video {
+    title:string;
+    rating:int;
+}
+
+table List {
+    videos: [Video];
+}
+
+table Lolomo {
+    lists: [List];
+}
+
+root_type Lolomo;
+
