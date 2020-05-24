@@ -1,13 +1,7 @@
-import { DenoTest } from "./lolomo_generated.ts"
 import { Lolomo, List, Video ,RatingsResponse } from "./types.ts";
 import { getEnv } from "./env.ts";
 
-export function parseRatings(ratingsObj: Lolomo | DenoTest.Lolomo): number[] {
-    if (ratingsObj instanceof DenoTest.Lolomo) {
-        // TODO: Do the flat buffers
-        return [];
-    }
-
+export function parseRatings(ratingsObj: Lolomo): number[] {
     const ids: number[] = [];
     ratingsObj.lists.forEach((l: List) => {
         l.videos.forEach(v => {
@@ -24,7 +18,7 @@ function buildFBRatings(ratings: number[]): string {
 }
 
 export async function ratingsService(ratings: number[]): Promise<RatingsResponse | Uint8Array> {
-    const isJson = getEnv("IS_JSON") === "true";
+    const isJson = getEnv(`IS_JSON`) === 'true';
     const res = await fetch("http://localhost:8002", {
         method: "POST",
         body: isJson ? JSON.stringify(ratings) : buildFBRatings(ratings),

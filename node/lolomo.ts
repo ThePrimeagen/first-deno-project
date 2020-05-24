@@ -1,37 +1,30 @@
+
 import {
-    getEnv,
+    getEnvAsBoolean,
     getEnvAsNumber,
-} from "./env.ts";
+} from "../deno/env";
 
 import {
     Video,
     List,
     Lolomo,
-} from "./types.ts";
+} from "../deno/types";
 
-export async function lolomoServiceDeno(req: any): Promise<Uint8Array | Lolomo> {
-    const res = await fetch("http://localhost:8001", {
-        headers: req.headers
-    });
+import { get } from "./get";
 
-    if (!res.ok || !res.body) {
-        throw new Error("How did your crappy example fail?  You should stop programming and be with your wife you pile of human debris.");
+export async function lolomoServiceNode() {
+    const lolomo = await get("http://localhost:8001");
+    if (getEnvAsBoolean("IS_JSON") && typeof lolomo === "string") {
+        return JSON.parse(lolomo) as Lolomo;
     }
-
-    if (getEnv("IS_JSON") === "true") {
-        return await res.json() as Lolomo;
-    }
-
-    const blobby = await res.blob();
-    const buf = await blobby.arrayBuffer();
-    return new Uint8Array(buf);
+    throw new Error("Not Implement");
 };
 
 export function createLolomo(): Lolomo {
-    if (getEnv("IS_JSON") === "true") {
+    if (getEnvAsBoolean("IS_JSON")) {
         return createLolomoJSON();
     }
-    throw new Error("lolomo");
+    throw new Error("Sorry, not implemented");
 }
 
 const randomString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -72,4 +65,5 @@ export function createLolomoJSON(): Lolomo {
 
     return lolomo;
 }
+
 

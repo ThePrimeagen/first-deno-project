@@ -1,4 +1,5 @@
 node_modules
 .zshrc.bak
+src/.env
 
 

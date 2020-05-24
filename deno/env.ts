@@ -1,5 +1,7 @@
 export function setEnv(key: string, value: string) {
+    // @ts-ignore
     if (typeof Deno !== "undefined") {
+        // @ts-ignore
         Deno.env.set(key, value);
     } else {
         // @ts-ignore
@@ -8,7 +10,9 @@ export function setEnv(key: string, value: string) {
 }
 
 export function getEnv(str: string): string | undefined {
-    if (typeof Deno !== 'undefined') {
+    // @ts-ignore
+    if (typeof Deno !== "undefined") {
+        // @ts-ignore
         return Deno.env.get(str);
     } else {
         // @ts-ignore
@@ -16,8 +20,17 @@ export function getEnv(str: string): string | undefined {
     }
 }
 
-export function getEnvAsNumber(str: string): number {
+export function getEnvAsBoolean(str: string): boolean {
     const v = getEnv(str);
+    if (v !== undefined) {
+        return v.toLowerCase() === "true";
+    }
+
+    return false;
+}
+
+export function getEnvAsNumber(str: string): number {
+const v = getEnv(str);
     if (v !== undefined) {
         return +v;
     }

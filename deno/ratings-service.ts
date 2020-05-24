@@ -15,8 +15,6 @@ const s = serve({
     port: 8002
 });
 
-console.log("About to run ratings service");
-
 for await (const req of s) {
 
     if (getEnv("IS_JSON") === "true") {
