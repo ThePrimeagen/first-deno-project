@@ -7,32 +7,30 @@ import {
 } from 'https://deno.land/std/ws/mod.ts'
 
 import {
-    TickerEvent
+    TickerEvent,
+    Exchange,
+    PriceMap,
+    TradeResult,
+    ProductId,
+    WsEvent,
+    SnapshotEvent,
+    Level2Event,
+    Listener,
+    PriceInfo,
 } from "./types.ts";
 
-export type Price = {
-    buy: number,
-    sell: number,
-    price: number
-};
 
-export type Prices = {
-    [key: string]: Price;
-}
-
-type Listener = (prices: Prices) => void;
-
-export default class Coinbase {
+export class Coinbase implements Exchange {
     private sock?: WebSocket
     private listeners: Listener[];
-    private prices: Prices;
+    private prices: PriceMap;
 
     constructor() {
         this.prices = {};
         this.listeners = [];
     }
 
-    public addTicker(ticker: string) {
+    public addCurrency(ticker: ProductId) {
         if (!this.sock) {
             throw new Error("Hellz yeah, you managed to be bad at programming");
         }
@@ -45,6 +43,10 @@ export default class Coinbase {
         this.sock.send(JSON.stringify(channelRequest));
     }
 
+    public getPrice(product: ProductId): PriceInfo | undefined {
+        return this.prices[product];
+    }
+
     public onPriceChange(listener: Listener) {
         this.listeners.push(listener);
     }
@@ -52,6 +54,29 @@ export default class Coinbase {
     public async connect() {
         this.sock = await connectWebSocket("wss://ws-feed.pro.coinbase.com/");
         this.listenToSocket();
+    }
+
+    public async buyLimit(currency: string, price: number, volume: number): Promise<TradeResult> {
+        // TODO: Do something with this.
+        //
+        // What does a buy return?  How can we tell when a limit order has been
+        // fulfilled?
+        return new Promise(res => {
+            res({
+                success: true,
+                orderId: "69",
+            });
+        });
+    }
+
+    public async sellLimit(currency: string, price: number, volume: number): Promise<TradeResult> {
+        // TODO: Do something with this.
+        return new Promise(res => {
+            res({
+                success: true,
+                orderId: "69",
+            });
+        });
     }
 
     private async listenToSocket() {
@@ -80,18 +105,21 @@ export default class Coinbase {
             }
 
             // TODO: If I listen for any thing else this will literaly explode.
-            const tEvent = JSON.parse(message) as TickerEvent;
-            const product = tEvent.product_id;
-            if (!this.prices[product]) {
-                this.prices[product] = { buy: 0, sell: 0, price: 0 };
+            const tEvent = JSON.parse(message) as WsEvent;
+
+            if (tEvent.type === "ticker") {
+                const product = tEvent.product_id;
+                if (!this.prices[product]) {
+                    this.prices[product] = { buy: 0, sell: 0, price: 0 };
+                }
+
+                const item = this.prices[product];
+                item.price = +tEvent.price;
+                item.buy = +tEvent.best_bid;
+                item.sell = +tEvent.best_ask;
+
+                this.listeners.forEach(cb => cb(product, item, this.prices));
             }
-
-            const item = this.prices[product];
-            item.price = +tEvent.price;
-            item.buy = +tEvent.best_bid;
-            item.sell = +tEvent.best_ask;
-
-            this.listeners.forEach(cb => cb(item, this.prices));
         }
     }
 }
