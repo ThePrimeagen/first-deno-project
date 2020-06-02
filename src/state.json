@@ -1,0 +1,33 @@
+{
+    "ETH-USD": {
+        "buys": [
+            {
+                "orderId": "306a2314-08a3-4514-8346-cca560f1a9a4",
+                "price": 244.9,
+                "volume": 0.01
+            },
+            {
+                "orderId": "8df9a2d3-e855-464f-b89e-77c2460b0dac",
+                "price": 243.06,
+                "volume": 0.01
+            },
+            {
+                "orderId": "e95e74c4-741d-4751-bb14-cd046dae2f09",
+                "price": 241.24,
+                "volume": 0.01
+            },
+            {
+                "orderId": "8646dd1c-33a0-4822-867d-cad19f2064af",
+                "price": 239.43,
+                "volume": 0.01
+            },
+            {
+                "orderId": "ac6c0907-0af1-4f6f-868b-bdb3b415ba6d",
+                "price": 237.63,
+                "volume": 0.01
+            }
+        ],
+        "sells": [],
+        "completed": []
+    }
+}

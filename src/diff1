@@ -1,0 +1,10 @@
+curl \
+    -H "User-Agent: ThePrimeAgent" \
+    -H "content-type: application/json" \
+    -H "CB-ACCESS-KEY: ad1e6e2c3f0927ecc115816f22b31249" \
+    -H "CB-ACCESS-TIMESTAMP: 1590886133" \
+    -H "CB-ACCESS-PASSPHRASE: u00hzhelwg" \
+    -H "CB-ACCESS-SIGN: UWrpxSHersCnaxVjx4v5KQ9JNjy-NsTNvNsmsOq4cFU=" \
+    --data '{"type":"limit","side":"buy","product_id":"ETH-USD","price":"200","size":"0.01"}' https://api.pro.coinbase.com/orders
+
+

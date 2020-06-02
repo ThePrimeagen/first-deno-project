@@ -53,23 +53,72 @@ export type TradeResult = {
     orderId: string;
 }
 
+export type OrderStatus = {
+  id: string,
+  price: string,
+  size: string,
+  product_id: ProductId,
+  side: "buy" | "sell",
+  type: "limit" | "market",
+  time_in_force: string,
+  post_only: boolean,
+  created_at: string,
+  fill_fees: string,
+  filled_size: string,
+  executed_value: string,
+  status: "pending" | "done",
+}
+
 export interface Exchange {
+
     connect(): Promise<void>;
     onPriceChange(cb: Listener): void;
     getPrice(product: ProductId): PriceInfo | undefined;
-    addCurrency(currency: ProductId): void;
+    addCurrency(currency: ProductId): Promise<void>;
+    getFee(): number;
+    getOrderStatus(orderId: string): Promise<OrderStatus>
 
     // ya ya
     // 48 Hour timeout on new api keys
     buyLimit(currency: string, price: number, volume: number): Promise<TradeResult>;
     sellLimit(currency: string, price: number, volume: number): Promise<TradeResult>;
+    sellMarket(currency: string, price: number, volume: number): Promise<TradeResult>;
+    cancelOrder(orderId: string): Promise<TradeResult>;
 }
 
 export interface Trader {
-    setState(pathToFile: string): Promise<void>;
     connect(): Promise<void>;
 }
 
-export type State = {
-    [key: string]: number[];
+export type OpenOrder = {
+    orderId: string;
+    price: number;
+    volume: number;
 }
+
+export type SellOpenOrder = OpenOrder & {
+    buyId: string;
+    buyPrice: number;
+    buyVolume: number;
+}
+
+export type CompletedOrder = {
+    sellId: string;
+    sellPrice: number;
+    sellVolume: number;
+
+    buyId: string;
+    buyPrice: number;
+    buyVolume: number;
+}
+
+export type StateItem = {
+    completed: CompletedOrder[];
+    buys: OpenOrder[];
+    sells: SellOpenOrder[];
+}
+
+export type State = {
+    [key: string]: StateItem;
+}
+
